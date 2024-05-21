@@ -9,9 +9,13 @@ const VariantSchema = new Schema<TVariant>({
 
 // Define the Inventory schema
 const InventorySchema = new Schema<TInventory>({
-  quantity: { type: Number, required: true },
-  inStock: { type: Boolean, required: true }
-});
+    quantity: { 
+      type: Number, 
+      required: true, 
+      min: [0, 'Quantity cannot be less than 0'] 
+    },
+    inStock: { type: Boolean, required: true }
+  });
 
 // Define the Product schema
 const ProductSchema = new Schema<TProduct,ProductModel,ProductMethods>({
