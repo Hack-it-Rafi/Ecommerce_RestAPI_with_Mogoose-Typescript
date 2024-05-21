@@ -8,10 +8,19 @@ const createProductIntoDB = async (productData: TProduct) => {
   return result;
 };
 
-const getAllProductsFromDB = async () => {
-  const result = await Product.find();
-  return result;
-};
+const getAllProductsFromDB = async (searchTerm?: string)=> {
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, 'i');
+      return await Product.find({
+        $or: [
+          { name: regex },
+          { description: regex },
+        ],
+      });
+    } else {
+      return await Product.find();
+    }
+  }
 
 const getSingleProductFromDB = async (id: string) => {
   const objectId = new mongoose.Types.ObjectId(id);
@@ -20,24 +29,29 @@ const getSingleProductFromDB = async (id: string) => {
   return result;
 };
 
-const updateProductFromDB = async (id: string, updateData: Partial<TProduct>) => {
-    try {
-      // Convert the id string to ObjectId
-      const objectId = new mongoose.Types.ObjectId(id);
-  
-      // Use findByIdAndUpdate to update the product information
-      const result = await Product.findByIdAndUpdate(objectId, updateData, { new: true, runValidators: true });
-  
-      return result;
-    } catch (error) {
-      console.error("Error updating product:", error);
-      throw error;
-    }
-  };
+const updateProductFromDB = async (id: string,updateData: Partial<TProduct>,) => {
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  const result = await Product.findByIdAndUpdate(objectId, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  return result;
+};
+
+const deleteProductFromDB = async (id: string) => {
+  const objectId = new mongoose.Types.ObjectId(id);
+  const result = await Product.deleteOne({ _id: objectId });
+  return result;
+};
+
+
 
 export const ProductService = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
-  updateProductFromDB
+  updateProductFromDB,
+  deleteProductFromDB
 };
