@@ -8,19 +8,16 @@ const createProductIntoDB = async (productData: TProduct) => {
   return result;
 };
 
-const getAllProductsFromDB = async (searchTerm?: string)=> {
-    if (searchTerm) {
-      const regex = new RegExp(searchTerm, 'i');
-      return await Product.find({
-        $or: [
-          { name: regex },
-          { description: regex },
-        ],
-      });
-    } else {
-      return await Product.find();
-    }
+const getAllProductsFromDB = async (searchTerm?: string) => {
+  if (searchTerm) {
+    const regex = new RegExp(searchTerm, 'i');
+    return await Product.find({
+      $or: [{ name: regex }, { description: regex }, { category: regex }],
+    });
+  } else {
+    return await Product.find();
   }
+};
 
 const getSingleProductFromDB = async (id: string) => {
   const objectId = new mongoose.Types.ObjectId(id);
@@ -29,7 +26,10 @@ const getSingleProductFromDB = async (id: string) => {
   return result;
 };
 
-const updateProductFromDB = async (id: string,updateData: Partial<TProduct>,) => {
+const updateProductFromDB = async (
+  id: string,
+  updateData: Partial<TProduct>,
+) => {
   const objectId = new mongoose.Types.ObjectId(id);
 
   const result = await Product.findByIdAndUpdate(objectId, updateData, {
@@ -46,12 +46,10 @@ const deleteProductFromDB = async (id: string) => {
   return result;
 };
 
-
-
 export const ProductService = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
   updateProductFromDB,
-  deleteProductFromDB
+  deleteProductFromDB,
 };
