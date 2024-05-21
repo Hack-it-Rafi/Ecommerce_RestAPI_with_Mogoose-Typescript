@@ -12,7 +12,7 @@ app.use(cors());
 app.use('/api/products', ProductRoutes);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send("Go to '/api/products' for products, '/api/orders' for orders");
+  res.send("Go toooooo '/api/products' for products, '/api/orders' for orders");
 });
 
 export default app;
