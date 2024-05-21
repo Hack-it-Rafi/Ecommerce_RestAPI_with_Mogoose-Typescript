@@ -14,19 +14,30 @@ const getAllProductsFromDB = async () => {
 };
 
 const getSingleProductFromDB = async (id: string) => {
-  // Convert the id string to ObjectId
   const objectId = new mongoose.Types.ObjectId(id);
-  console.log(objectId);
-
-  // Use the aggregate function with $match
   const result = await Product.aggregate([{ $match: { _id: objectId } }]);
-//   console.log(result);
 
   return result;
 };
+
+const updateProductFromDB = async (id: string, updateData: Partial<TProduct>) => {
+    try {
+      // Convert the id string to ObjectId
+      const objectId = new mongoose.Types.ObjectId(id);
+  
+      // Use findByIdAndUpdate to update the product information
+      const result = await Product.findByIdAndUpdate(objectId, updateData, { new: true, runValidators: true });
+  
+      return result;
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  };
 
 export const ProductService = {
   createProductIntoDB,
   getAllProductsFromDB,
   getSingleProductFromDB,
+  updateProductFromDB
 };
