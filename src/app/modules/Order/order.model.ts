@@ -16,7 +16,6 @@ const orderSchema = new Schema<TOrder>({
   productId: {
     type: String,
     required: true,
-    //   ref: 'Product', // Assuming you have a Product model
   },
   price: {
     type: Number,
