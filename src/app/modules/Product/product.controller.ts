@@ -30,15 +30,15 @@ const getAllProducts = async (req: Request, res: Response) => {
     const result = await ProductService.getAllProductsFromDB(searchTerm);
 
     res.status(200).json({
-        success: true,
-        message: searchTerm
-          ? `Products matching search term '${searchTerm}' fetched successfully!`
-          : 'Products fetched successfully!',
-        data: result,
-      });;
-  } catch (err) {
-    res.status(200).json({
       success: true,
+      message: searchTerm
+        ? `Products matching search term '${searchTerm}' fetched successfully!`
+        : 'Products fetched successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
       message: 'Something went wrong',
       error: err,
     });
@@ -46,65 +46,68 @@ const getAllProducts = async (req: Request, res: Response) => {
 };
 
 const getSingleProduct = async (req: Request, res: Response) => {
-    try {
-      const { productId } = req.params;
-  
-      const result = await ProductService.getSingleProductFromDB(productId);
-  
-      res.status(200).json({
-        success: true,
-        message: 'Product fetched successfully!',
-        data: result,
-      });
-    } catch (err) {
-      res.status(200).json({
-        success: true,
-        message: 'Something went wrong',
-        error: err,
-      });
-    }
-  };
+  try {
+    const { productId } = req.params;
 
-  const updateProduct = async (req: Request, res: Response) => {
-    try {
-      const { productId } = req.params;
-      const updateData = req.body;
-  
-      const result = await ProductService.updateProductFromDB(productId, updateData);
-  
-      res.status(200).json({
-        success: true,
-        message: "Product updated successfully!",
-        data: result,
-      });
-    } catch (err) {
-      res.status(200).json({
-        success: true,
-        message: 'Something went wrong',
-        error: err,
-      });
-    }
-  };
+    const result = await ProductService.getSingleProductFromDB(productId);
 
-  const deleteProduct = async (req: Request, res: Response) => {
-    try {
-      const { productId } = req.params;
-  
-      const result = await ProductService.deleteProductFromDB(productId);
-  
-      res.status(200).json({
-        success: true,
-        message: 'Product deleted successfully!',
-        data: result,
-      });
-    } catch (err) {
-      res.status(200).json({
-        success: true,
-        message: 'Something went wrong',
-        error: err,
-      });
-    }
-  };
+    res.status(200).json({
+      success: true,
+      message: 'Product fetched successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+      error: err,
+    });
+  }
+};
+
+const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const updateData = req.body;
+
+    const result = await ProductService.updateProductFromDB(
+      productId,
+      updateData,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+      error: err,
+    });
+  }
+};
+
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+
+    const result = await ProductService.deleteProductFromDB(productId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+      error: err,
+    });
+  }
+};
 
 export const ProductControllers = {
   createProduct,

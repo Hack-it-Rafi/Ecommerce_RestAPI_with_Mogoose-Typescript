@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 export type TOrder = {
   email: string;
@@ -11,8 +11,4 @@ export type OrderMethods = {
   isUserExists(id: string): Promise<TOrder | null>;
 };
 
-export type OrderModel = Model<
-  TOrder,
-  Record<string, never>,
-  OrderMethods
->;
+export type OrderModel = Model<TOrder, Record<string, never>, OrderMethods>;

@@ -4,26 +4,101 @@ import mongoose from 'mongoose';
 
 const createProductIntoDB = async (productData: TProduct) => {
   const product = new Product(productData);
-  const result = await product.save();
-  return result;
+  const savedProduct = await product.save();
+
+  const result = await Product.aggregate([
+    { $match: { _id: savedProduct._id } },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        description: 1,
+        price: 1,
+        category: 1,
+        tags: 1,
+        variants: {
+          type: 1,
+          value: 1,
+        },
+        inventory: {
+          quantity: 1,
+          inStock: 1,
+        },
+      },
+    },
+  ]);
+
+  if (result.length === 0) {
+    return null;
+  }
+  return result[0];
 };
 
 const getAllProductsFromDB = async (searchTerm?: string) => {
-  if (searchTerm) {
-    const regex = new RegExp(searchTerm, 'i');
-    return await Product.find({
-      $or: [{ name: regex }, { description: regex }, { category: regex }],
-    });
-  } else {
-    return await Product.find();
-  }
+  const matchStage = searchTerm
+    ? {
+        $or: [
+          { name: { $regex: searchTerm, $options: 'i' } },
+          { description: { $regex: searchTerm, $options: 'i' } },
+          { category: { $regex: searchTerm, $options: 'i' } },
+          { tags: { $regex: searchTerm, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const pipeline = [
+    { $match: matchStage },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        description: 1,
+        price: 1,
+        category: 1,
+        tags: 1,
+        variants: {
+          type: 1,
+          value: 1,
+        },
+        inventory: {
+          quantity: 1,
+          inStock: 1,
+        },
+      },
+    },
+  ];
+
+  return await Product.aggregate(pipeline);
 };
 
 const getSingleProductFromDB = async (id: string) => {
   const objectId = new mongoose.Types.ObjectId(id);
-  const result = await Product.aggregate([{ $match: { _id: objectId } }]);
+  const result = await Product.aggregate([
+    { $match: { _id: objectId } },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        description: 1,
+        price: 1,
+        category: 1,
+        tags: 1,
+        variants: {
+          type: 1,
+          value: 1,
+        },
+        inventory: {
+          quantity: 1,
+          inStock: 1,
+        },
+      },
+    },
+  ]);
 
-  return result;
+  if (result.length === 0) {
+    return null;
+  }
+  return result[0];
 };
 
 const updateProductFromDB = async (
@@ -32,18 +107,42 @@ const updateProductFromDB = async (
 ) => {
   const objectId = new mongoose.Types.ObjectId(id);
 
-  const result = await Product.findByIdAndUpdate(objectId, updateData, {
+  await Product.findByIdAndUpdate(objectId, updateData, {
     new: true,
     runValidators: true,
   });
 
-  return result;
-};
+  const result = await Product.aggregate([
+    { $match: { _id: objectId } },
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        description: 1,
+        price: 1,
+        category: 1,
+        tags: 1,
+        variants: {
+          type: 1,
+          value: 1,
+        },
+        inventory: {
+          quantity: 1,
+          inStock: 1,
+        },
+      },
+    },
+  ]);
 
+  if (result.length === 0) {
+    return null;
+  }
+  return result[0];
+};
 const deleteProductFromDB = async (id: string) => {
   const objectId = new mongoose.Types.ObjectId(id);
-  const result = await Product.deleteOne({ _id: objectId });
-  return result;
+  await Product.deleteOne({ _id: objectId });
+  return null;
 };
 
 export const ProductService = {

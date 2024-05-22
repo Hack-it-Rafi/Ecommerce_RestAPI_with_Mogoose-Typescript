@@ -17,12 +17,10 @@ const createOrder = async (req: Request, res: Response) => {
         .json({ success: false, message: 'Product not found' });
     }
     if (product.inventory.quantity < quantity) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: 'Insufficient quantity available in inventory',
-        });
+      return res.status(400).json({
+        success: false,
+        message: 'Insufficient quantity available in inventory',
+      });
     }
     product.inventory.quantity -= quantity;
 
@@ -40,7 +38,7 @@ const createOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.status(200).json({
+    res.status(400).json({
       success: false,
       message: 'Something went wrong',
       error: error,
@@ -68,8 +66,8 @@ const getAllOrders = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    res.status(200).json({
-      success: true,
+    res.status(400).json({
+      success: false,
       message: 'Something went wrong',
       error: err,
     });
