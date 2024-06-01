@@ -9,7 +9,7 @@ const createOrderIntoDB = async (orderData: TOrder) => {
       { $match: { _id: savedOrder._id } },
       {
         $project: {
-          _id: 0,
+          _id: 1,
           email:1,
           productId:1,
           price:1,
@@ -28,7 +28,7 @@ const getAllOrdersFromDB = async (email?: string) => {
     const query = email ? { email } : {};
   
     const orders = await Order.find(query).select({
-        _id: 0,
+        _id: 1,
         email:1,
         productId:1,
         price:1,

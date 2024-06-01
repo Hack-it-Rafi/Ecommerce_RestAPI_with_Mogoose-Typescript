@@ -10,7 +10,7 @@ const createProductIntoDB = async (productData: TProduct) => {
     { $match: { _id: savedProduct._id } },
     {
       $project: {
-        _id: 0,
+        _id: 1,
         name: 1,
         description: 1,
         price: 1,
@@ -50,7 +50,7 @@ const getAllProductsFromDB = async (searchTerm?: string) => {
     { $match: matchStage },
     {
       $project: {
-        _id: 0,
+        _id: 1,
         name: 1,
         description: 1,
         price: 1,
@@ -77,7 +77,7 @@ const getSingleProductFromDB = async (id: string) => {
     { $match: { _id: objectId } },
     {
       $project: {
-        _id: 0,
+        _id: 1,
         name: 1,
         description: 1,
         price: 1,
@@ -116,7 +116,7 @@ const updateProductFromDB = async (
     { $match: { _id: objectId } },
     {
       $project: {
-        _id: 0,
+        _id: 1,
         name: 1,
         description: 1,
         price: 1,
